@@ -1,7 +1,8 @@
-import { Controller, Post, Body, Request, UseGuards } from '@nestjs/common';
+import { Controller, Post, Body, Request, UseGuards, Res, HttpStatus } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateUserDto } from 'src/user/dto/create-user.dto';
 import { LocalAuthGuard } from './guards/local-auth.guard';
+import { Response } from 'express';
 
 @Controller('auth')
 export class AuthController {
@@ -18,5 +19,14 @@ export class AuthController {
   @Post('login')
   async login(@Request() req: any) {
     return this.authService.login(req.user);
+  }
+
+  // Logout the current user
+  @Post('logout')
+  async logout(@Res() res: Response) {
+    // Clear JWT cookie if stored in cookies
+    res.clearCookie('jwt'); // Adjust the cookie name if different
+
+    return res.status(HttpStatus.OK).json({ message: 'Logout successful' });
   }
 }
