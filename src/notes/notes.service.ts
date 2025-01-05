@@ -14,7 +14,7 @@ export class NotesService {
 
   // Get all notes for a specific user
   async findAll(userId: string): Promise<Note[]> {
-    return this.noteModel.find({ $or: [{ owner: userId }, { collaborators: userId }] }).exec();
+    return this.noteModel.find({  owner: userId } ).exec();
   }
 
   // Find a specific note by ID
@@ -32,23 +32,20 @@ export class NotesService {
     return this.noteModel.findByIdAndDelete(noteId).exec();
   }
 
-  // Add a collaborator to a note
-  async addCollaborator(noteId: string, collaboratorId: string, ownerId: string): Promise<Note> {
+  // Add collaborators to a note
+  async addCollaborators(noteId: string, emails: string[], ownerId: string): Promise<Note> {
     const note = await this.noteModel.findById(noteId);
   
     if (!note) {
       throw new NotFoundException('Note not found');
     }
   
-    if (note.owner !== ownerId) {
-      throw new ForbiddenException('You are not the owner of this note');
-    }
+    // if (note.owner !== ownerId) {
+    //   throw new ForbiddenException('You are not the owner of this note to add collaborators');
+    // }
   
-    if (note.collaborators.includes(collaboratorId)) {
-      throw new BadRequestException('Collaborator already added');
-    }
-  
-    note.collaborators.push(collaboratorId);
+    const newCollaborators = emails;
+    note.collaborators = [...newCollaborators];
     return note.save();
   }
 
@@ -69,14 +66,14 @@ export class NotesService {
   }
 
   // Validate access to a note
-  async validateAccess(noteId: string, userId: string): Promise<Note> {
+  async validateAccess(noteId: string, userId: string, email: string): Promise<Note> {
     const note = await this.noteModel.findById(noteId);
   
     if (!note) {
       throw new NotFoundException('Note not found');
     }
   
-    if (note.owner !== userId && !note.collaborators.includes(userId)) {
+    if (note.owner !== userId && !note.collaborators.includes(email)) {
       throw new ForbiddenException('You do not have access to this note');
     }
   
@@ -93,6 +90,12 @@ export class NotesService {
   
     note.content = content;
     return note.save();
+  }
+  
+  
+  // Find all notes where the email id is a collaborator
+  async findAllByCollaborator(emailId: string): Promise<Note[]> {
+    return this.noteModel.find({ collaborators: { $in: [emailId] } }).exec();
   }
   
   

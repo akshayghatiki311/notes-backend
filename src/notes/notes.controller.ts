@@ -63,10 +63,11 @@ export class NotesController {
   @UseGuards(JwtAuthGuard)
   async addCollaborator(
     @Param('id') noteId: string,
-    @Body('collaboratorId') collaboratorId: string,
+    @Body('collaboratorEmails') collaboratorEmails: string,
     @Request() req
   ) {
-    return this.notesService.addCollaborator(noteId, collaboratorId, req.user.userId);
+    const emails = collaboratorEmails.split(',');
+    return this.notesService.addCollaborators(noteId, emails, req.user.userId);
   }
 
   // Remove a collaborator from a note
@@ -88,12 +89,22 @@ export class NotesController {
     @Request() req
   ) {
     const userId = req.user.userId;
+    const email = req.user.email;
 
     // Validate if the user has access to edit the note
-    const note = await this.notesService.validateAccess(noteId, userId);
+    const note = await this.notesService.validateAccess(noteId, userId, email);
 
     // Update the content in the database
     return this.notesService.updateNoteContent(noteId, content);
+  }
+
+  
+  // Get all notes in which the user is a collaborator
+  @Get('get/collaborations')
+  @UseGuards(JwtAuthGuard)
+  async getCollaborations(@Request() req) {
+    const email = req.user.email;
+    return this.notesService.findAllByCollaborator(email);
   }
 
 
