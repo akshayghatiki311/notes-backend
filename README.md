@@ -13,9 +13,10 @@ Steps to run the application in local:
 2. cd application-folder
 3. Run "npm install"
 4. Create a .env file in the project root directory.
-5. Update .env with JWT_SECRET=3f9b8e7d-4c2a-4e5b-9d2f-8a6e7c4b5d1a
-                    JWT_EXPIRES_IN=3600s
-                    DATABASE_URI=mongodb+srv://akshay:akshay@cluster0.lr6d3zg.mongodb.net/notes?retryWrites=true&w=majority
-                    ENABLE_CORS=http://localhost:5173
-                    PORT=3000
+5. Update .env with 
+  JWT_SECRET=3f9b8e7d-4c2a-4e5b-9d2f-8a6e7c4b5d1a
+  JWT_EXPIRES_IN=3600s
+  DATABASE_URI=mongodb+srv://akshay:akshay@cluster0.lr6d3zg.mongodb.net/notes?retryWrites=true&w=majority
+  ENABLE_CORS=http://localhost:5173
+  PORT=3000
 6. Run "npm run start:dev"
