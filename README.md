@@ -1,14 +1,14 @@
-#ScribbleSync
+# ScribbleSync
 
 This is a web application for real-time collaborative note-taking
 Backend application is built using Nestjs.
 
-##Requirements:
+Requirements:
 1. Nodejs v22.12.0
 2. Git 2.39.5
 3. MongoDB
 
-##Steps to run the application in local:
+Steps to run the application in local:
 1. git pull respository
 2. cd application-folder
 3. Run "npm install"
