@@ -86,6 +86,7 @@ export class NotesController {
   async editNote(
     @Param('id') noteId: string,
     @Body('content') content: string,
+    @Body('title') title: string,
     @Request() req
   ) {
     const userId = req.user.userId;
@@ -95,7 +96,7 @@ export class NotesController {
     const note = await this.notesService.validateAccess(noteId, userId, email);
 
     // Update the content in the database
-    return this.notesService.updateNoteContent(noteId, content);
+    return this.notesService.updateNoteContent(noteId, title, content);
   }
 
   

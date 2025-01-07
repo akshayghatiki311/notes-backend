@@ -81,13 +81,13 @@ export class NotesService {
   }
   
   // Update the content of a note
-  async updateNoteContent(noteId: string, content: string): Promise<Note> {
+  async updateNoteContent(noteId: string, title:string, content: string): Promise<Note> {
     const note = await this.noteModel.findById(noteId);
   
     if (!note) {
       throw new NotFoundException('Note not found');
     }
-  
+    note.title = title;
     note.content = content;
     return note.save();
   }
