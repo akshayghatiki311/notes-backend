@@ -66,7 +66,9 @@ export class NotesController {
     @Body('collaboratorEmails') collaboratorEmails: string,
     @Request() req
   ) {
-    const emails = collaboratorEmails.split(',');
+    const emails = Array.isArray(collaboratorEmails) 
+      ? collaboratorEmails 
+      : collaboratorEmails.split(',');
     return this.notesService.addCollaborators(noteId, emails, req.user.userId);
   }
 
