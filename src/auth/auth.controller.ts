@@ -24,8 +24,8 @@ export class AuthController {
   // Logout the current user
   @Post('logout')
   async logout(@Res() res: Response) {
-    // Clear JWT cookie if stored in cookies
-    res.clearCookie('jwt'); // Adjust the cookie name if different
+    // Clear JWT cookie if stored in cookiess
+    res.clearCookie('token'); 
 
     return res.status(HttpStatus.OK).json({ message: 'Logout successful' });
   }
