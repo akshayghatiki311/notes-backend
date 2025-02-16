@@ -3,7 +3,9 @@ import {
   Post, 
   UseInterceptors, 
   UploadedFile,
-  BadRequestException
+  BadRequestException,
+  Query,
+  Body
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { OcrService } from './ocr.service';
@@ -33,10 +35,47 @@ export class OcrController {
       fileSize: 5 * 1024 * 1024 // 5MB
     }
   }))
-  async extractIngredients(@UploadedFile() file: Express.Multer.File) {
+  async extractIngredients(
+    @UploadedFile() file: Express.Multer.File,
+    @Query('useHuggingFace') useHuggingFace?: string
+  ) {
     if (!file) {
       throw new BadRequestException('No image file uploaded');
     }
-    return this.ocrService.extractTextFromImage(file.path);
+    return this.ocrService.extractTextFromImage(file.path, useHuggingFace === 'true');
+  }
+
+  @Post('analyze-ingredients')
+  async analyzeIngredients(
+    @Body() body: { 
+      ingredients: string;
+      age: number;
+      gender: string;
+      conditions: string;
+    },
+    @Query('useHuggingFace') useHuggingFace?: string
+  ) {
+    if (!body.ingredients) {
+      throw new BadRequestException('No ingredients provided');
+    }
+    if (!body.age || !body.gender) {
+      throw new BadRequestException('Age and gender are required');
+    }
+
+    const analysis = useHuggingFace === 'true'
+      ? await this.ocrService.analyzeIngredientsHuggingFace(
+          body.ingredients,
+          body.age,
+          body.gender,
+          body.conditions
+        )
+      : await this.ocrService.analyzeIngredients(
+          body.ingredients,
+          body.age,
+          body.gender,
+          body.conditions
+        );
+    
+    return { analysis };
   }
 }
